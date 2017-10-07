@@ -1,0 +1,425 @@
+<html>
+	<head>
+		<script>
+			var cash = 0;
+			var DPS = 0;
+			var CPS = 0;
+			var time = new Date().getTime();
+			var timepassed=0;
+			var trueDPS=0;
+			var trueCPS=0;
+			var windowWidth=0;
+			var windowHeight=0;
+			var gemshakeinfo=null;
+
+			class Gem{
+				constructor(id){
+					this.id=id;
+					this.maxhealth=10;
+					this.health=10;
+					this.hardness=0;
+					this.number=1;
+					this.value=10;
+					this.numberunlocked=1;
+					this.canbehit=true;
+					this.breaktimer=0;
+					this.x=0;
+					this.y=0;
+					this.width=0;
+					this.height=0;
+					document.getElementById(this.id).draggable=false;
+				}
+				clicked(){
+					if(this.canbehit){
+						if (itemPick.getInfo()[4]>this.hardness){
+							this.health-=itemPick.getInfo()[4]-this.hardness;
+						}
+						if (this.health<=0) {
+							this.gemBreak();
+						}
+						gemshakeinfo=this.shake();
+					}
+					else{
+						if(new Date().getTime()-this.breaktimer>1000){
+							this.toggleCanBeHit();
+						}
+					}
+				}
+				gemBreak(){
+					cash+=this.value;
+					if (this.number==this.numberunlocked){
+						this.numberunlocked++;
+					}
+					this.health=0;
+					this.toggleCanBeHit();
+				}
+				shake(){
+					var originalx=this.x;
+					var originaly=this.y;
+					var randx=Math.floor(Math.random()*windowWidth/70);
+					if (randx<windowWidth/140){
+						randx-=windowWidth/70;
+					}
+					var randy=Math.floor(Math.random()*windowWidth/70);
+					if (randy<windowWidth/140){
+						randy-=windowWidth/70;
+					}
+					var targetx=randx+originalx;
+					var targety=randy+originaly;
+					return [originalx,originaly,targetx,targety,0];
+				}
+				shakeTick(){
+					if (gemshakeinfo[4]<=3){
+						this.move((gemshakeinfo[2]-gemshakeinfo[0])/6+this.x,(gemshakeinfo[3]-gemshakeinfo[1])/3+this.y)
+						gemshakeinfo[4]++;
+					}
+					else{
+						this.move((gemshakeinfo[0]-gemshakeinfo[2])/6+this.x,(gemshakeinfo[1]-gemshakeinfo[3])/3+this.y)
+						gemshakeinfo[4]++;
+						if(gemshakeinfo[4]==7){
+							gemshakeinfo=null;
+							this.repos();
+						}
+					}
+				}
+				changeGem(modifier){
+					if (!(modifier==-1&&this.number==1)){
+						if (this.number<this.numberunlocked || modifier==-1){
+							this.number+=modifier
+							document.getElementById("gem1").src="Data/Sprites/Gems/gem"+this.number+".png"
+							this.reloadGem();
+							if(!this.canbehit){
+								this.toggleCanBeHit();
+							}
+							
+							recalculateDPS();
+						}
+					}
+				}
+				
+				reloadGem(){
+					var mult=5
+					if (this.number==1){
+						mult=1;
+					}
+					else{
+						mult=this.number*5
+					}
+					this.maxhealth=Math.ceil(2*mult*(mult+10));
+					this.health=this.maxhealth;
+					this.value=Math.ceil(((mult+5)*mult*Math.pow(mult,0.2)/15+2)*2);
+					this.hardness=Math.ceil(Math.pow(mult,2)/20);
+					if (this.hardness==1){
+						this.hardness=0;
+					}
+					if (this.number==1){
+						buttonLeft.setVisible(false);
+					}
+					else{
+						buttonLeft.setVisible(true);
+					}
+					if (this.number==this.numberunlocked){
+						buttonRight.setVisible(false);
+					}
+					else{
+						buttonRight.setVisible(true);
+					}
+				}
+				getInfo(){
+					return [this.maxhealth,this.health,this.value,this.hardness,this.number];
+				}
+				damage(){
+					if(this.canbehit){
+						if (DPS-this.hardness>0){
+							this.health-=(DPS-this.hardness)*timepassed/1000;
+						}
+						if (this.health<=0){
+							this.gemBreak();
+						}
+					}
+					else{
+						if(new Date().getTime()-this.breaktimer>1000){
+							this.toggleCanBeHit();
+						}
+					}
+				}
+				toggleCanBeHit(){
+					if (this.canbehit){
+						this.breaktimer=new Date().getTime();
+						this.canbehit=false;
+					}
+					else{
+						this.breaktimer=0;
+						this.canbehit=true;
+						this.reloadGem();
+					}
+				}
+				repos(){
+					this.width= document.getElementById("gem1").clientWidth;
+					this.height= document.getElementById("gem1").clientHeight;
+					this.move(windowWidth/2-this.width/2,windowHeight/2-this.height/2);
+				}
+				move(xpos,ypos){	
+					editStyleWithString("gem1","top:"+ypos+"px; left:"+xpos+"px;");
+					this.x=xpos
+					this.y=ypos
+				}
+			}
+
+			class Item{
+				constructor(name, costmodifier, power, type, count){
+					this.name=name;
+					this.count=count;
+					this.costmodifier=costmodifier;
+					this.cost=Math.pow(this.count+costmodifier,2);
+					this.power=power;
+					this.type=type;
+					this.upgradecost=Math.pow(10,this.cost.toString().length);
+				}
+				buy(){
+					if (this.cost<=cash) {
+						cash-=this.cost;
+						this.count+=1;
+						this.cost=Math.pow(this.count+this.costmodifier,2);
+						recalculateDPS();
+					}
+				}
+				buyUpgrade(){
+					if (this.upgradecost<=cash){
+						cash-=this.upgradecost;
+						this.power*=2;
+						this.upgradecost*=10;
+						recalculateDPS();
+					}
+				}
+				getInfo(){
+					return [this.name,this.cost,this.power,this.count,this.power*this.count,this.upgradecost]
+				}
+			}
+
+			class MenuButton{
+				constructor(name,xpos,ypos){
+					this.name=name
+					this.width=0;
+					this.height=0;
+					this.defaultx=xpos;
+					this.defaulty=ypos;
+					this.x=0;
+					this.y=0;
+					this.visibile=true;
+					document.getElementById(this.name).draggable=false;
+				}
+				repos(){
+					this.width= document.getElementById(this.name).clientWidth;
+					this.height= document.getElementById(this.name).clientHeight;
+					this.move(this.defaultx*windowWidth-this.width/2,this.defaulty*windowHeight-this.height/2);
+					this.setVisible(this.visible);
+				}
+				move(xpos,ypos){	
+					editStyleWithString(this.name,"top:"+ypos+"px; left:"+xpos+"px;");
+					this.x=xpos
+					this.y=ypos
+				}
+				setVisible(visibility){
+					this.visible=visibility;
+					setImageVisible(this.name,this.visible);
+				}
+			}
+			function recalculateDPS(){
+				DPS=0;
+				CPS=0;
+				for (i in itemDPS){
+					DPS+=itemDPS[i].getInfo()[4];
+				}
+				for (i in itemCPS){
+					CPS+=itemCPS[i].getInfo()[4];
+				}
+				if (DPS<gem1.getInfo()[3]){
+					trueDPS=0;
+				}
+				else{
+					trueDPS=DPS-gem1.getInfo()[3];
+				}
+				if (trueDPS>0){
+					trueCPS=Math.round(gem1.getInfo()[2]/(gem1.getInfo()[0]/trueDPS+1)*10)/10;
+				}
+				else{
+					trueCPS=0;
+				}
+			}
+
+			function textWrite(id,text){
+				document.getElementById(id).innerHTML = text;
+			}
+			function editStyle(id,parameter,value){
+				document.getElementById(id).setAttribute("style",parameter+": "+value);
+			}
+			function editStyleWithString(id,valuestring){
+				document.getElementById(id).setAttribute("style",valuestring);
+			}
+
+			function setImageVisible(id, visible) {
+    			var img = document.getElementById(id);
+    			if(visible){
+    				img.style.visibility = "visible";
+    			}
+    			else{
+    				img.style.visibility = "hidden";
+    			}
+			}
+
+
+		</script>
+		<style>
+			#gem1 {
+			    position: absolute;
+			    left: 20%;
+			    top: 40%;
+			    width: 15%;
+			    height: auto;
+			    image-rendering: pixelated;
+			}
+			#buttonLeft {
+			    position: absolute;
+			    left: 40%;
+			    top: 45%;
+			    width: 5%;
+			    height: auto;
+			    image-rendering: pixelated;
+			}
+			#buttonRight {
+			    position: absolute;
+			    left: 40%;
+			    top: 45%;
+			    width: 5%;
+			    height: auto;
+			    image-rendering: pixelated;
+			}
+			body{
+				color:FFFFFF;
+			}
+			.noselect {
+			  -webkit-touch-callout: none;
+			    -webkit-user-select: none;
+			     -khtml-user-select: none;
+			       -moz-user-select: none;
+			        -ms-user-select: none;
+			            user-select: none;
+			}
+		</style>
+	</head>
+	<body id=body1 class="noselect" style="background-image:url('Data/Sprites/Background/dirt.png'); background-size:200px 200px; image-rendering: pixelated;">
+		<img src="Data/Sprites/Gems/gem1.png" id="gem1">
+		<img src="Data/Sprites/arrow2.png" id="buttonLeft">
+		<img src="Data/Sprites/arrow.png" id="buttonRight">
+		<p id = "displayCash">Error</p>
+		<p id = "displayGemHealth">Error</p>
+		<p id = "displayDPS">Error</p>
+		<p></p>
+		<button onclick = itemPick.buy() id = "displayPickCost">Error</button>
+		<span id = "displayPickLevel">Error</span>
+		<p></p>
+		<button onclick = itemDPS[0].buyUpgrade() id = "displayDPSUpgradeCost0">Error</button>
+		<button onclick = itemDPS[0].buy() id = "displayDPSCost0">Error</button>
+		<span id = "displayDPSLevel0">Error</span>
+		<p></p>
+		<button onclick = itemCPS[0].buyUpgrade() id = "displayCPSUpgradeCost0">Error</button>
+		<button onclick = itemCPS[0].buy() id = "displayCPSCost0">Error</button>
+		<span id = "displayCPSLevel0">Error</span>
+		<p></p>
+		<button onclick = itemDPS[1].buyUpgrade() id = "displayDPSUpgradeCost1">Error</button>
+		<button onclick = itemDPS[1].buy() id = "displayDPSCost1">Error</button>
+		<span id = "displayDPSLevel1">Error</span>
+		<p></p>
+		<button onclick = itemCPS[1].buyUpgrade() id = "displayCPSUpgradeCost1">Error</button>
+		<button onclick = itemCPS[1].buy() id = "displayCPSCost1">Error</button>
+		<span id = "displayCPSLevel1">Error</span>
+		<p></p>
+		<button onclick = itemDPS[2].buyUpgrade() id = "displayDPSUpgradeCost2">Error</button>
+		<button onclick = itemDPS[2].buy() id = "displayDPSCost2">Error</button>
+		<span id = "displayDPSLevel2">Error</span>
+		<p></p>
+		<button onclick = itemCPS[2].buyUpgrade() id = "displayCPSUpgradeCost2">Error</button>
+		<button onclick = itemCPS[2].buy() id = "displayCPSCost2">Error</button>
+		<span id = "displayCPSLevel2">Error</span>
+		<p></p>
+		<button onclick = itemDPS[3].buyUpgrade() id = "displayDPSUpgradeCost3">Error</button>
+		<button onclick = itemDPS[3].buy() id = "displayDPSCost3">Error</button>
+		<span id = "displayDPSLevel3">Error</span>
+
+		<script>
+			windowWidth=window.innerWidth;
+			windowHeight=window.innerHeight;
+
+			itemPick=new Item("Pick",0,1,"click",1);
+			itemDPS=[new Item("Miner",5,1,"damage",0),new Item("Driller",32,10,"damage",0),new Item("Mining Robot",350,100,"damage",0),new Item("Orbital Laser",3200,1000,"damage",0)]
+			itemCPS=[new Item("Crystal Growing Kit",10,0.5,"damage",0),new Item("Gift Shop",100,5,"damage",0),new Item("Time Machine",1000,50,"damage",0)]
+
+			gem1=new Gem("gem1");
+			buttonLeft=new MenuButton("buttonLeft",0.25,0.5);
+			buttonRight=new MenuButton("buttonRight",0.75,0.5);
+			gem1.reloadGem();
+
+			
+			document.getElementById("gem1").onclick=function(){
+				gem1.clicked();
+				return false;
+			}
+			document.getElementById("buttonLeft").onclick=function(){
+				gem1.changeGem(-1);
+				return false;
+			}
+			document.getElementById("buttonRight").onclick=function(){
+				gem1.changeGem(1);
+				return false;
+			}
+
+			gem1.repos();
+			buttonLeft.repos();
+			buttonRight.repos();
+
+			gem1.reloadGem();
+
+			setInterval(function() { mainloop() },1000/60);
+			
+			function mainloop(){
+				if(windowWidth!=window.innerWidth||windowHeight!=window.innerHeight){
+					windowWidth=window.innerWidth;
+					windowHeight=window.innerHeight;
+					gem1.repos();
+					buttonLeft.repos();
+					buttonRight.repos();
+				}
+
+				timepassed=new Date().getTime()-time;
+				time = new Date().getTime();
+				gem1.damage();
+				cash+=CPS*timepassed/1000;
+
+				if (gemshakeinfo!=null){
+					gem1.shakeTick();
+				}
+				
+				textWrite("displayCash","Cash: "+Math.floor(cash)+"$");
+				textWrite("displayGemHealth","Gem Level: "+gem1.getInfo()[4]+". Health: "+Math.ceil(gem1.getInfo()[1])+"/"+gem1.getInfo()[0]+". Hardness: "+gem1.getInfo()[3]+". Value: "+gem1.getInfo()[2]+"$.");
+				textWrite("displayDPS","DPS: "+DPS+" ("+trueDPS+"). "+CPS+"$ ("+trueCPS+"$) per second.")
+
+				textWrite("displayPickLevel","Pickaxe Level: "+itemPick.getInfo()[3]+". Pickaxe Power: "+itemPick.getInfo()[4]);
+				textWrite("displayPickCost","Buy Pickaxe Upgrade: "+itemPick.getInfo()[1]+"$");
+
+				for (i in itemDPS){
+					textWrite("displayDPSLevel"+i,"You have "+itemDPS[i].getInfo()[3]+" "+itemDPS[i].getInfo()[0].toLowerCase()+"s, dealing "+itemDPS[i].getInfo()[4]+" damage per second.")
+					textWrite("displayDPSCost"+i,"Buy "+itemDPS[i].getInfo()[0]+": "+itemDPS[i].getInfo()[1]+"$");
+					textWrite("displayDPSUpgradeCost"+i,"Upgrade: "+itemDPS[i].getInfo()[5]+"$");
+				}
+				for (i in itemCPS){
+					textWrite("displayCPSLevel"+i,"You have "+itemCPS[i].getInfo()[3]+" "+itemCPS[i].getInfo()[0].toLowerCase()+"s, generating "+itemCPS[i].getInfo()[4]+"$ per second.")
+					textWrite("displayCPSCost"+i,"Buy "+itemCPS[i].getInfo()[0]+": "+itemCPS[i].getInfo()[1]+"$");
+					textWrite("displayCPSUpgradeCost"+i,"Upgrade: "+itemCPS[i].getInfo()[5]+"$");
+				}
+			}
+
+			
+		</script>
+	</body>
+</html>
