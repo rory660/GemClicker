@@ -1,5 +1,91 @@
 <html>
 	<head>
+		<style>
+			@font-face{
+				font-family: "Expressway-rg";
+				src: url("Data/Font/expresswayrg.ttf") format("truetype");
+			}
+			#gem1 {
+			    position: absolute;
+			    left: 20%;
+			    top: 60%;
+			    width: 15vw;
+			    height: auto;
+			    image-rendering: crisp-edges;
+			    z-index: 1;
+			}
+			#gemcrack1 {
+			    position: absolute;
+			    left: 20%;
+			    top: 40%;
+			    width: 15%;
+			    height: auto;
+			    image-rendering: crisp-edges;
+			    z-index: 2;
+			}
+			#buttonLeft {
+			    position: absolute;
+			    left: 40%;
+			    top: 60%;
+			    width: 5%;
+			    height: auto;
+			    image-rendering: crisp-edges;
+			}
+			#buttonRight {
+			    position: absolute;
+			    left: 40%;
+			    top: 60%;
+			    width: 5%;
+			    height: auto;
+			    image-rendering: crisp-edges;
+			}
+			#healthbar1 {
+			    position: absolute;
+			    left: 20vw;
+			    top: 8vw;
+			    width: 60vw;
+			    height: 4vw;
+			    background-color: black;
+			    z-index: 1;
+			}
+			#healthbar2 {
+			    position: absolute;
+			    left: 20.25vw;
+			    top: 8.25vw;
+			    width: 59.5vw;
+			    height: 3.5vw;
+			    background-color: green;
+			    z-index: 2;
+			}
+			#displayGemHealth{
+				position: relative;
+				margin-top: 8vw;
+				margin-bottom: 0vw;
+				text-align: center;
+				font-size: 3.2vw;
+				z-index: 3;
+			}
+			#displayGemValue{
+				position: relative;
+				margin-top: 5vw;
+				text-align: center;
+				font-size: 3.2vw;
+				z-index: 3;
+			}
+
+			body{
+				color:FFFFFF;
+				font-family: "Expressway-rg";
+			}
+			.noselect {
+			  -webkit-touch-callout: none;
+			    -webkit-user-select: none;
+			     -khtml-user-select: none;
+			       -moz-user-select: none;
+			        -ms-user-select: none;
+			            user-select: none;
+			}
+		</style>
 		<script>
 			var cash = 0;
 			var DPS = 0;
@@ -335,92 +421,7 @@
 
 
 		</script>
-		<style>
-			@font-face{
-				font-family: "Expressway-rg";
-				src: url("Data/Font/expresswayrg.ttf") format("truetype");
-			}
-			#gem1 {
-			    position: absolute;
-			    left: 20%;
-			    top: 60%;
-			    width: 15vw;
-			    height: auto;
-			    image-rendering: crisp-edges;
-			    z-index: 1;
-			}
-			#gemcrack1 {
-			    position: absolute;
-			    left: 20%;
-			    top: 40%;
-			    width: 15%;
-			    height: auto;
-			    image-rendering: crisp-edges;
-			    z-index: 2;
-			}
-			#buttonLeft {
-			    position: absolute;
-			    left: 40%;
-			    top: 60%;
-			    width: 5%;
-			    height: auto;
-			    image-rendering: crisp-edges;
-			}
-			#buttonRight {
-			    position: absolute;
-			    left: 40%;
-			    top: 60%;
-			    width: 5%;
-			    height: auto;
-			    image-rendering: crisp-edges;
-			}
-			#healthbar1 {
-			    position: absolute;
-			    left: 20vw;
-			    top: 8vw;
-			    width: 60vw;
-			    height: 4vw;
-			    background-color: black;
-			    z-index: 1;
-			}
-			#healthbar2 {
-			    position: absolute;
-			    left: 20.25vw;
-			    top: 8.25vw;
-			    width: 59.5vw;
-			    height: 3.5vw;
-			    background-color: green;
-			    z-index: 2;
-			}
-			#displayGemHealth{
-				position: relative;
-				margin-top: 8vw;
-				margin-bottom: 0vw;
-				text-align: center;
-				font-size: 3.2vw;
-				z-index: 3;
-			}
-			#displayGemValue{
-				position: relative;
-				margin-top: 5vw;
-				text-align: center;
-				font-size: 3.2vw;
-				z-index: 3;
-			}
-
-			body{
-				color:FFFFFF;
-				font-family: "Expressway-rg";
-			}
-			.noselect {
-			  -webkit-touch-callout: none;
-			    -webkit-user-select: none;
-			     -khtml-user-select: none;
-			       -moz-user-select: none;
-			        -ms-user-select: none;
-			            user-select: none;
-			}
-		</style>
+		
 	</head>
 	<body id=body1 class="noselect" style="background-image:url('Data/Sprites/Background/dirt.png'); background-size:200px 200px; image-rendering: pixelated;">
 		<div id = "healthbar1"></div>
