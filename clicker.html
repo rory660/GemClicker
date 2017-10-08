@@ -27,6 +27,7 @@
 					this.y=0;
 					this.width=0;
 					this.height=0;
+					this.crackvisible=false;
 					document.getElementById(this.id).draggable=false;
 				}
 				clicked(){
@@ -38,20 +39,24 @@
 							this.gemBreak();
 						}
 						gemshakeinfo=this.shake();
+						healthBar.repos();
 					}
 					else{
 						if(new Date().getTime()-this.breaktimer>1000){
-							this.toggleCanBeHit();
+							
 						}
 					}
 				}
 				gemBreak(){
+					this.crackvisible=true;
 					cash+=this.value;
 					if (this.number==this.numberunlocked){
 						this.numberunlocked++;
 					}
 					this.health=0;
 					this.toggleCanBeHit();
+					this.shake();
+					
 				}
 				shake(){
 					var originalx=this.x;
@@ -69,25 +74,51 @@
 					return [originalx,originaly,targetx,targety,0];
 				}
 				shakeTick(){
-					if (gemshakeinfo[4]<=3){
-						this.move((gemshakeinfo[2]-gemshakeinfo[0])/6+this.x,(gemshakeinfo[3]-gemshakeinfo[1])/3+this.y)
-						gemshakeinfo[4]++;
-					}
-					else{
-						this.move((gemshakeinfo[0]-gemshakeinfo[2])/6+this.x,(gemshakeinfo[1]-gemshakeinfo[3])/3+this.y)
-						gemshakeinfo[4]++;
-						if(gemshakeinfo[4]==7){
-							gemshakeinfo=null;
-							this.repos();
+					if (this.canbehit){
+						if (gemshakeinfo[4]<=3){
+							this.move((gemshakeinfo[2]-gemshakeinfo[0])/6+this.x,(gemshakeinfo[3]-gemshakeinfo[1])/3+this.y)
+							gemshakeinfo[4]++;
+						}
+						else{
+							this.move((gemshakeinfo[0]-gemshakeinfo[2])/6+this.x,(gemshakeinfo[1]-gemshakeinfo[3])/3+this.y)
+							gemshakeinfo[4]++;
+							if(gemshakeinfo[4]==7){
+								gemshakeinfo=null;
+								this.repos();
+							}
 						}
 					}
+					else{
+						if (gemshakeinfo[4]<=30){
+							this.move((gemshakeinfo[2]-gemshakeinfo[0])/60+this.x,(gemshakeinfo[3]-gemshakeinfo[1])/30+this.y)
+							gemshakeinfo[4]++;
+						}
+						else{
+							this.move((gemshakeinfo[0]-gemshakeinfo[2])/60+this.x,(gemshakeinfo[1]-gemshakeinfo[3])/30+this.y)
+							gemshakeinfo[4]++;
+							if(gemshakeinfo[4]==61){
+								gemshakeinfo=null;
+								this.crackvisible=false;
+								this.repos();
+								this.toggleCanBeHit();
+							}
+						}
+					}
+					
 				}
 				changeGem(modifier){
-					if (!(modifier==-1&&this.number==1)){
+					if (!(modifier==-1&&this.number==1)&&!(modifier==1&&this.number==1000)){
 						if (this.number<this.numberunlocked || modifier==-1){
 							this.number+=modifier
-							document.getElementById("gem1").src="Data/Sprites/Gems/gem"+this.number+".png"
+							document.getElementById("gem1").src="Data/Sprites/Gems/gem"+(this.number-Math.floor(this.number/100)*100)+".png"
+							if (this.number%100==0){
+								document.getElementById("gemcrack1").src="Data/Sprites/gemcrack10.png"
+							}
+							else{
+								document.getElementById("gemcrack1").src="Data/Sprites/gemcrack"+((Math.floor((this.number-1)/10)*10-Math.floor(this.number/100)*100)/10+1)+".png"
+							}
 							this.reloadGem();
+							
 							if(!this.canbehit){
 								this.toggleCanBeHit();
 							}
@@ -98,6 +129,9 @@
 				}
 				
 				reloadGem(){
+					gemshakeinfo=null;
+					this.crackvisible=false;
+					setImageVisible("gemcrack1",this.crackvisible);
 					var mult=5
 					if (this.number==1){
 						mult=1;
@@ -124,6 +158,8 @@
 					else{
 						buttonRight.setVisible(true);
 					}
+					healthBar.repos();
+					this.repos();
 				}
 				getInfo(){
 					return [this.maxhealth,this.health,this.value,this.hardness,this.number];
@@ -132,6 +168,7 @@
 					if(this.canbehit){
 						if (DPS-this.hardness>0){
 							this.health-=(DPS-this.hardness)*timepassed/1000;
+							healthBar.repos();
 						}
 						if (this.health<=0){
 							this.gemBreak();
@@ -157,10 +194,12 @@
 				repos(){
 					this.width= document.getElementById("gem1").clientWidth;
 					this.height= document.getElementById("gem1").clientHeight;
-					this.move(windowWidth/2-this.width/2,windowHeight/2-this.height/2);
+					this.move(windowWidth/2-this.width/2,windowHeight*3/5-this.height/2);
 				}
 				move(xpos,ypos){	
 					editStyleWithString("gem1","top:"+ypos+"px; left:"+xpos+"px;");
+					editStyleWithString("gemcrack1","top:"+ypos+"px; left:"+xpos+"px;");
+					setImageVisible("gemcrack1",this.crackvisible);
 					this.x=xpos
 					this.y=ypos
 				}
@@ -225,6 +264,31 @@
 					setImageVisible(this.name,this.visible);
 				}
 			}
+
+			class HealthBar{
+				constructor(){
+					this.width1=0;
+					this.height1=0;
+					this.width2=0;
+					this.height2=0;
+					this.defaultx=0.5;
+					this.defaulty=0.1;
+					this.x = 0;
+					this.y = 0;
+				}
+				repos(){
+					this.width1= document.getElementById("healthbar1").clientWidth;
+					this.height1= document.getElementById("healthbar1").clientHeight;
+					this.width2= document.getElementById("healthbar2").clientWidth;
+					this.height2= document.getElementById("healthbar2").clientHeight;
+					this.move(this.defaultx*windowWidth-this.width1/2,this.defaulty*windowWidth-this.height1/2,this.defaulty*windowWidth-this.height2/2);
+				}
+				move(xpos,ypos,ypos2){
+					editStyleWithString("healthbar2","width:"+(gem1.getInfo()[1]/gem1.getInfo()[0]*59.5)+"vw;");
+					this.x=xpos
+					this.y=ypos
+				}
+			}
 			function recalculateDPS(){
 				DPS=0;
 				CPS=0;
@@ -241,7 +305,7 @@
 					trueDPS=DPS-gem1.getInfo()[3];
 				}
 				if (trueDPS>0){
-					trueCPS=Math.round(gem1.getInfo()[2]/(gem1.getInfo()[0]/trueDPS+1)*10)/10;
+					trueCPS=Math.round(gem1.getInfo()[2]/(gem1.getInfo()[0]/trueDPS+1)*10)/10+CPS;
 				}
 				else{
 					trueCPS=0;
@@ -271,32 +335,81 @@
 
 		</script>
 		<style>
+			@font-face{
+				font-family: "Expressway-rg";
+				src: url("Data/Font/expresswayrg.ttf") format("truetype");
+			}
 			#gem1 {
+			    position: absolute;
+			    left: 20%;
+			    top: 60%;
+			    width: 15vw;
+			    height: auto;
+			    image-rendering: crisp-edges;
+			    z-index: 1;
+			}
+			#gemcrack1 {
 			    position: absolute;
 			    left: 20%;
 			    top: 40%;
 			    width: 15%;
 			    height: auto;
-			    image-rendering: pixelated;
+			    image-rendering: crisp-edges;
+			    z-index: 2;
 			}
 			#buttonLeft {
 			    position: absolute;
 			    left: 40%;
-			    top: 45%;
+			    top: 60%;
 			    width: 5%;
 			    height: auto;
-			    image-rendering: pixelated;
+			    image-rendering: crisp-edges;
 			}
 			#buttonRight {
 			    position: absolute;
 			    left: 40%;
-			    top: 45%;
+			    top: 60%;
 			    width: 5%;
 			    height: auto;
-			    image-rendering: pixelated;
+			    image-rendering: crisp-edges;
 			}
+			#healthbar1 {
+			    position: absolute;
+			    left: 20vw;
+			    top: 8vw;
+			    width: 60vw;
+			    height: 4vw;
+			    background-color: black;
+			    z-index: 1;
+			}
+			#healthbar2 {
+			    position: absolute;
+			    left: 20.25vw;
+			    top: 8.25vw;
+			    width: 59.5vw;
+			    height: 3.5vw;
+			    background-color: green;
+			    z-index: 2;
+			}
+			#displayGemHealth{
+				position: relative;
+				margin-top: 8vw;
+				margin-bottom: 0vw;
+				text-align: center;
+				font-size: 3.2vw;
+				z-index: 3;
+			}
+			#displayGemValue{
+				position: relative;
+				margin-top: 5vw;
+				text-align: center;
+				font-size: 3.2vw;
+				z-index: 3;
+			}
+
 			body{
 				color:FFFFFF;
+				font-family: "Expressway-rg";
 			}
 			.noselect {
 			  -webkit-touch-callout: none;
@@ -309,11 +422,16 @@
 		</style>
 	</head>
 	<body id=body1 class="noselect" style="background-image:url('Data/Sprites/Background/dirt.png'); background-size:200px 200px; image-rendering: pixelated;">
+		<div id = "healthbar1"></div>
+		<div id = "healthbar2"></div>
 		<img src="Data/Sprites/Gems/gem1.png" id="gem1">
+		<img src="Data/Sprites/gemcrack1.png" id="gemcrack1">
 		<img src="Data/Sprites/arrow2.png" id="buttonLeft">
 		<img src="Data/Sprites/arrow.png" id="buttonRight">
-		<p id = "displayCash">Error</p>
 		<p id = "displayGemHealth">Error</p>
+		<p id = "displayGemValue">Error</p>
+		<p id = "displayCash">Error</p>
+		<p id = "displayGemHealthOld">Error</p>
 		<p id = "displayDPS">Error</p>
 		<p></p>
 		<button onclick = itemPick.buy() id = "displayPickCost">Error</button>
@@ -356,12 +474,17 @@
 			itemCPS=[new Item("Crystal Growing Kit",10,0.5,"damage",0),new Item("Gift Shop",100,5,"damage",0),new Item("Time Machine",1000,50,"damage",0)]
 
 			gem1=new Gem("gem1");
-			buttonLeft=new MenuButton("buttonLeft",0.25,0.5);
-			buttonRight=new MenuButton("buttonRight",0.75,0.5);
+			buttonLeft=new MenuButton("buttonLeft",0.25,0.6);
+			buttonRight=new MenuButton("buttonRight",0.75,0.6);
+			healthBar = new HealthBar();
 			gem1.reloadGem();
 
 			
 			document.getElementById("gem1").onclick=function(){
+				gem1.clicked();
+				return false;
+			}
+			document.getElementById("gemcrack1").onclick=function(){
 				gem1.clicked();
 				return false;
 			}
@@ -377,6 +500,7 @@
 			gem1.repos();
 			buttonLeft.repos();
 			buttonRight.repos();
+			healthBar.repos();
 
 			gem1.reloadGem();
 
@@ -389,6 +513,7 @@
 					gem1.repos();
 					buttonLeft.repos();
 					buttonRight.repos();
+					healthBar.repos();
 				}
 
 				timepassed=new Date().getTime()-time;
@@ -399,9 +524,13 @@
 				if (gemshakeinfo!=null){
 					gem1.shakeTick();
 				}
+
 				
+				textWrite("displayGemHealth",Math.floor(gem1.getInfo()[1])+"/"+gem1.getInfo()[0]);
+				textWrite("displayGemValue","Hardness: "+gem1.getInfo()[3]+" Value: "+gem1.getInfo()[2]+"$");
+
 				textWrite("displayCash","Cash: "+Math.floor(cash)+"$");
-				textWrite("displayGemHealth","Gem Level: "+gem1.getInfo()[4]+". Health: "+Math.ceil(gem1.getInfo()[1])+"/"+gem1.getInfo()[0]+". Hardness: "+gem1.getInfo()[3]+". Value: "+gem1.getInfo()[2]+"$.");
+				textWrite("displayGemHealthOld","Gem Level: "+gem1.getInfo()[4]+". Health: "+Math.ceil(gem1.getInfo()[1])+"/"+gem1.getInfo()[0]+". Hardness: "+gem1.getInfo()[3]+". Value: "+gem1.getInfo()[2]+"$.");
 				textWrite("displayDPS","DPS: "+DPS+" ("+trueDPS+"). "+CPS+"$ ("+trueCPS+"$) per second.")
 
 				textWrite("displayPickLevel","Pickaxe Level: "+itemPick.getInfo()[3]+". Pickaxe Power: "+itemPick.getInfo()[4]);
