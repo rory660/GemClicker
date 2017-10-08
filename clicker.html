@@ -55,7 +55,7 @@
 					}
 					this.health=0;
 					this.toggleCanBeHit();
-					this.shake();
+					gemshakeinfo=this.shake();
 					
 				}
 				shake(){
@@ -89,6 +89,7 @@
 						}
 					}
 					else{
+						setImageVisible("healthbar2",false);
 						if (gemshakeinfo[4]<=30){
 							this.move((gemshakeinfo[2]-gemshakeinfo[0])/60+this.x,(gemshakeinfo[3]-gemshakeinfo[1])/30+this.y)
 							gemshakeinfo[4]++;
