@@ -5,10 +5,35 @@
 				font-family: "Expressway-rg";
 				src: url("Data/Font/expresswayrg.ttf") format("truetype");
 			}
+			.standardButton{
+			    width: 3vw;
+			    height: auto;
+			    image-rendering: auto;
+			    margin-bottom: 0.25vw;
+			    z-index: 50;
+			}
+			#textCentered{
+				position: absolute;
+				width:50vw;
+				top: 4.75vw;
+				left: 25vw;
+			}
+			#upgradeHolder{
+				position: absolute;
+				top: 15vw;
+				width: 3vw;
+				left: 0.5vw;
+			}
+			#upgradeHolder2{
+				position: absolute;
+				top: 15vw;
+				width: 3vw;
+				left: 96.5vw;
+			}
 			#gem1 {
 			    position: absolute;
 			    left: 20%;
-			    top: 60%;
+			    top: 22.5vw;
 			    width: 15vw;
 			    height: auto;
 			    image-rendering: crisp-edges;
@@ -17,25 +42,25 @@
 			#gemcrack1 {
 			    position: absolute;
 			    left: 20%;
-			    top: 40%;
-			    width: 15%;
+			    top: 50%;
+			    width: 15vw;
 			    height: auto;
 			    image-rendering: crisp-edges;
 			    z-index: 2;
 			}
 			#buttonLeft {
 			    position: absolute;
-			    left: 40%;
-			    top: 60%;
-			    width: 5%;
+			    left: 32.5vw;
+			    top: 27.5vw;
+			    width: 5vw;
 			    height: auto;
 			    image-rendering: crisp-edges;
 			}
 			#buttonRight {
 			    position: absolute;
-			    left: 40%;
-			    top: 60%;
-			    width: 5%;
+			    left: 62.5vw;
+			    top: 27.5vw;
+			    width: 5vw;
 			    height: auto;
 			    image-rendering: crisp-edges;
 			}
@@ -59,7 +84,6 @@
 			}
 			#displayGemHealth{
 				position: relative;
-				margin-top: 8vw;
 				margin-bottom: 0vw;
 				text-align: center;
 				font-size: 3.2vw;
@@ -72,6 +96,15 @@
 				font-size: 3.2vw;
 				z-index: 3;
 			}
+			#buttonUpgrades{
+				position: absolute;
+			    left: 1vw;
+			    top: 22.5vw;
+			    width: 5vw;
+			    height: 5vw;
+			    image-rendering: crisp-edges;
+			}
+
 
 			body{
 				color:FFFFFF;
@@ -228,8 +261,11 @@
 					}
 					this.maxhealth=Math.ceil(2*mult*(mult+10));
 					this.health=this.maxhealth;
-					this.value=Math.ceil(((mult+5)*mult*Math.pow(mult,0.2)/15+2)*2);
 					this.hardness=Math.ceil(Math.pow(mult,2)/20);
+					this.value = this.hardness * 10;
+					if (this.number == 1) {
+						this.value = 5;
+					}
 					if (this.hardness==1){
 						this.hardness=0;
 					}
@@ -281,7 +317,7 @@
 				repos(){
 					this.width= document.getElementById("gem1").clientWidth;
 					this.height= document.getElementById("gem1").clientHeight;
-					this.move(windowWidth/2-this.width/2,windowHeight*3/5-this.height/2);
+					this.move(windowWidth/2-this.width/2,windowWidth*3/10-this.height/2);
 				}
 				move(xpos,ypos){	
 					editStyleWithString("gem1","top:"+ypos+"px; left:"+xpos+"px;");
@@ -324,27 +360,10 @@
 			}
 
 			class MenuButton{
-				constructor(name,xpos,ypos){
+				constructor(name){
 					this.name=name
-					this.width=0;
-					this.height=0;
-					this.defaultx=xpos;
-					this.defaulty=ypos;
-					this.x=0;
-					this.y=0;
 					this.visibile=true;
 					document.getElementById(this.name).draggable=false;
-				}
-				repos(){
-					this.width= document.getElementById(this.name).clientWidth;
-					this.height= document.getElementById(this.name).clientHeight;
-					this.move(this.defaultx*windowWidth-this.width/2,this.defaulty*windowHeight-this.height/2);
-					this.setVisible(this.visible);
-				}
-				move(xpos,ypos){	
-					editStyleWithString(this.name,"top:"+ypos+"px; left:"+xpos+"px;");
-					this.x=xpos
-					this.y=ypos
 				}
 				setVisible(visibility){
 					this.visible=visibility;
@@ -424,18 +443,41 @@
 		
 	</head>
 	<body id=body1 class="noselect" style="background-image:url('Data/Sprites/Background/dirt.png'); background-size:200px 200px; image-rendering: pixelated;">
+		<img src="Data/Sprites/Gems/gem1.png" id="gem1">
 		<div id = "healthbar1"></div>
 		<div id = "healthbar2"></div>
-		<img src="Data/Sprites/Gems/gem1.png" id="gem1">
 		<img src="Data/Sprites/gemcrack1.png" id="gemcrack1">
 		<img src="Data/Sprites/arrow2.png" id="buttonLeft">
 		<img src="Data/Sprites/arrow.png" id="buttonRight">
-		<p id = "displayGemHealth">Error</p>
-		<p id = "displayGemValue">Error</p>
+		<div id="upgradeHolder">
+			<img src="Data/Sprites/pickaxe.png" onclick = itemPick.buy() id="buttonUpgradePickaxe" class="standardButton">
+			<img src="Data/Sprites/miner.png"  onclick = itemDPS[0].buy() id="buttonUpgradeMiner" class="standardButton">
+			<img src="Data/Sprites/grower.png" onclick = itemCPS[0].buy() id="buttonUpgradeGrower" class="standardButton">
+			<img src="Data/Sprites/driller.png" onclick = itemDPS[1].buy() id="buttonUpgradeDriller" class="standardButton">
+			<img src="Data/Sprites/giftshop.png" onclick = itemCPS[1].buy() id="buttonUpgradeGiftShop" class="standardButton">
+			<img src="Data/Sprites/robot.png" onclick = itemDPS[2].buy() id="buttonUpgradeRobot" class="standardButton">
+			<img src="Data/Sprites/timemachine.png" onclick = itemCPS[2].buy() id="buttonUpgradeTimeMachine" class="standardButton">
+			<img src="Data/Sprites/laser.png" onclick = itemDPS[3].buy() id="buttonUpgradeLaser" class="standardButton">
+		</div>
+		<div id="upgradeHolder2">
+			<img src="Data/Sprites/pickaxe.png" onclick = itemPick.buyUpgrade() id="buttonUpgradePickaxe2" class="standardButton">
+			<img src="Data/Sprites/miner.png" onclick = itemDPS[0].buyUpgrade() id="buttonUpgradeMiner2" class="standardButton">
+			<img src="Data/Sprites/grower.png" onclick = itemCPS[0].buyUpgrade() id="buttonUpgradeGrower2" class="standardButton">
+			<img src="Data/Sprites/driller.png" onclick = itemDPS[1].buyUpgrade() id="buttonUpgradeDriller2" class="standardButton">
+			<img src="Data/Sprites/giftshop.png" onclick = itemCPS[1].buyUpgrade() id="buttonUpgradeGiftShop2" class="standardButton">
+			<img src="Data/Sprites/robot.png" onclick = itemDPS[2].buyUpgrade() id="buttonUpgradeRobot2" class="standardButton">
+			<img src="Data/Sprites/timemachine.png" onclick = itemCPS[2].buyUpgrade() id="buttonUpgradeTimeMachine2" class="standardButton">
+			<img src="Data/Sprites/laser.png" onclick = itemDPS[3].buyUpgrade() id="buttonUpgradeLaser2" class="standardButton">
+		</div>
+		<div id="textCentered">
+			<p id = "displayGemHealth">Error</p>
+			<p id = "displayGemValue">Error</p>
+		</div>
 		<p id = "displayCash">Error</p>
 		<p id = "displayGemHealthOld">Error</p>
 		<p id = "displayDPS">Error</p>
 		<p></p>
+		<button onclick = itemPick.buyUpgrade() id = "displayPickUpgradeCost">Error</button>
 		<button onclick = itemPick.buy() id = "displayPickCost">Error</button>
 		<span id = "displayPickLevel">Error</span>
 		<p></p>
@@ -476,32 +518,29 @@
 			itemCPS=[new Item("Crystal Growing Kit",10,0.5,"damage",0),new Item("Gift Shop",100,5,"damage",0),new Item("Time Machine",1000,50,"damage",0)]
 
 			gem1=new Gem("gem1");
-			buttonLeft=new MenuButton("buttonLeft",0.25,0.6);
-			buttonRight=new MenuButton("buttonRight",0.75,0.6);
+			buttonLeft=new MenuButton("buttonLeft");
+			buttonRight=new MenuButton("buttonRight");
+			buttonItem=[];
 			healthBar = new HealthBar();
 			gem1.reloadGem();
 
 			
 			document.getElementById("gem1").onclick=function(){
 				gem1.clicked();
-				return false;
 			}
 			document.getElementById("gemcrack1").onclick=function(){
 				gem1.clicked();
-				return false;
 			}
 			document.getElementById("buttonLeft").onclick=function(){
 				gem1.changeGem(-1);
-				return false;
 			}
 			document.getElementById("buttonRight").onclick=function(){
 				gem1.changeGem(1);
-				return false;
 			}
 
+
+
 			gem1.repos();
-			buttonLeft.repos();
-			buttonRight.repos();
 			healthBar.repos();
 
 			gem1.reloadGem();
@@ -513,8 +552,6 @@
 					windowWidth=window.innerWidth;
 					windowHeight=window.innerHeight;
 					gem1.repos();
-					buttonLeft.repos();
-					buttonRight.repos();
 					healthBar.repos();
 				}
 
@@ -536,7 +573,8 @@
 				textWrite("displayDPS","DPS: "+DPS+" ("+trueDPS+"). "+CPS+"$ ("+trueCPS+"$) per second.")
 
 				textWrite("displayPickLevel","Pickaxe Level: "+itemPick.getInfo()[3]+". Pickaxe Power: "+itemPick.getInfo()[4]);
-				textWrite("displayPickCost","Buy Pickaxe Upgrade: "+itemPick.getInfo()[1]+"$");
+				textWrite("displayPickCost","Improve Pickaxe: "+itemPick.getInfo()[1]+"$");
+				textWrite("displayPickUpgradeCost","Upgrade: "+itemPick.getInfo()[5]+"$");
 
 				for (i in itemDPS){
 					textWrite("displayDPSLevel"+i,"You have "+itemDPS[i].getInfo()[3]+" "+itemDPS[i].getInfo()[0].toLowerCase()+"s, dealing "+itemDPS[i].getInfo()[4]+" damage per second.")
