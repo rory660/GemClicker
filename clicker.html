@@ -368,6 +368,7 @@
 					healthBar.repos();
 					this.repos();
 					textWrite("displayGemValue","Hardness: "+this.hardness+" Value: "+this.value+"$");
+					textWrite("displayGemHealth",Math.floor(this.health)+"/"+this.maxhealth);
 				}
 
 				recalculateStats(){
@@ -666,10 +667,10 @@
 			<p id = laserTextUpgradeCount class = "standardTextSmall"></p>
 		</div>
 		<div id = "CashTextHolder">
-			<img src = "Data/Sprites/cash1.png" id = "cashIcon" class = "standardIcon">
+			<img src = "Data/Sprites/cash1.png" id = "cashIcon" class = "standardIcon" draggable = "false">
 			<span id = "cashText" class = "standardTextHeader2"></span>
 		</div>
-		<img src = "Data/Sprites/darkfade.png" id = "cashFadeIcon" class = "standardFadeIcon">
+		<img src = "Data/Sprites/darkfade.png" id = "cashFadeIcon" class = "standardFadeIcon" draggable = "false">
 		<div id="textCentered">
 			<p id = "displayGemHealth" class = "blackBorder">Error</p>
 			<p id = "displayGemValue" class = "blackBorder">Error</p>
@@ -745,6 +746,7 @@
 			healthBar.repos();
 
 			gem1.reloadGem();
+			recalculateDPS();
 
 
 
@@ -764,12 +766,11 @@
 					gem1.repos();
 					first=false;
 				}
-				if (trueDPS>gem1.getInfo[3]){
-					gem1.damage();
-				}
 				if (gemshakeinfo!=null){
 					gem1.shakeTick();
 				}
+
+				gem1.damage();
 
 				textWrite("displayDPS","DPS: "+DPS+" ("+trueDPS+"). "+CPS+"$ ("+trueCPS+"$) per second.")
 				textWrite("displayPickLevel","Pickaxe Level: "+itemPick.getInfo()[3]+". Pickaxe Power: "+itemPick.getInfo()[4]);
