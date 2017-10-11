@@ -318,7 +318,6 @@
 							}
 						}
 					}
-					
 				}
 				changeGem(modifier){
 					if (!(modifier==-1&&this.number==1)&&!(modifier==1&&this.number==1000)){
@@ -452,12 +451,12 @@
 						cash-=this.cost;
 						this.count+=1;
 						this.cost=Math.pow(this.count+this.costmodifier,2);
-						recalculateDPS();
 						if (this.count > 0){
 							textWrite(this.id+"TextCount",numPrefix(this.count));
 						}
 						textWrite(this.id+"TextCost",numPrefix(this.cost)+"$");
 						textWrite("cashText",Math.floor(cash));
+						recalculateDPS();
 					}
 				}
 				buyUpgrade(){
@@ -466,12 +465,12 @@
 						this.power*=2;
 						this.upgradecost*=10;
 						this.upgradecount+=1;
-						recalculateDPS();
 						if (this.upgradecount > 0){
 							textWrite(this.id+"TextUpgradeCount",numPrefix(this.upgradecount));
 						}
 						textWrite(this.id+"TextUpgradeCost",numPrefix(this.upgradecost)+"$");
 						textWrite("cashText",Math.floor(cash));
+						recalculateDPS();
 					}
 				}
 				getInfo(){
@@ -757,6 +756,7 @@
 				timepassed=new Date().getTime()-time;
 				time = new Date().getTime();
 				cash+=CPS*timepassed/1000;
+				textWrite("cashText",Math.floor(cash));
 
 				if(windowWidth!=window.innerWidth||windowHeight!=window.innerHeight || first){
 					windowWidth=window.innerWidth;
