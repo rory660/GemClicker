@@ -456,6 +456,7 @@
 							textWrite(this.id+"TextCount",numPrefix(this.count));
 						}
 						textWrite(this.id+"TextCost",numPrefix(this.cost)+"$");
+						textWrite("cashText",Math.floor(cash));
 					}
 				}
 				buyUpgrade(){
@@ -469,6 +470,7 @@
 							textWrite(this.id+"TextUpgradeCount",numPrefix(this.upgradecount));
 						}
 						textWrite(this.id+"TextUpgradeCost",numPrefix(this.upgradecost)+"$");
+						textWrite("cashText",Math.floor(cash));
 					}
 				}
 				getInfo(){
