@@ -17,6 +17,7 @@
 				font-size: 3vw;
 				top: -0.75vw;
 				text-shadow: -0.1vw 0 black, 0 0.1vw black, 0.1vw 0 black, 0 -0.1vw black;
+				z-index: 0;
 			}
 			.standardTextHeader{
 				font-size: 3vw;
@@ -43,10 +44,53 @@
 				text-shadow: #000 0px 0px 1vw, #000 0px 0px 1vw, -0.1vw 0 black, 0 0.1vw black, 0.1vw 0 black, 0 -0.1vw black;
 			}
 			.imageBorder{
-				padding: 20px;
+				padding: 15px;
 				border-image: url("Data/Sprites/border1.png") 10 round;
 				border-image-slice: 10 10 10 10 fill; border-image-width: 20px 20px 20px 20px; border-image-repeat: repeat repeat;
 				image-rendering: pixelated;
+			}
+
+			.tooltip{
+				display:inline-block;
+				width: 3vw;
+			}
+
+			.tooltip .tooltipText{
+				visibility: hidden;
+				position: absolute;
+				width:20vw;
+				height:4vw;
+				left: 3vw;
+				z-index: 10;
+				line-height: 1vw;
+				font-size: 0.8vw;
+			}
+
+			.tooltip:hover .tooltipText {
+ 				visibility: visible;
+
+			}
+
+			.tooltip2{
+				display:inline-block;
+				width: 3vw;
+			}
+
+			.tooltip2 .tooltipText2{
+				visibility: hidden;
+				position: absolute;
+				width:25vw;
+				height:4vw;
+				right: 3.25vw;
+				z-index: 10;
+				line-height: 1vw;
+				font-size: 0.8vw;
+				text-align: left;
+			}
+
+			.tooltip2:hover .tooltipText2 {
+ 				visibility: visible;
+
 			}
 			#cashTextHolder{
 				position: absolute;
@@ -443,8 +487,14 @@
 					if (this.upgradecount > 0){
 						textWrite(this.id+"TextUpgradeCount",numPrefix(this.upgradecount));
 					}
+
+					if (this.count > 0){
+						textWrite(this.id+"TextCount",numPrefix(this.count));
+					}
 					textWrite(this.id+"TextCost",numPrefix(this.cost)+"$");
 					textWrite(this.id+"TextUpgradeCost",numPrefix(this.upgradecost)+"$");
+					this.updateTooltip(0);
+					this.updateTooltip(1);
 				}
 				buy(){
 					if (this.cost<=cash) {
@@ -457,6 +507,7 @@
 						textWrite(this.id+"TextCost",numPrefix(this.cost)+"$");
 						textWrite("cashText",Math.floor(cash));
 						recalculateDPS();
+						this.updateTooltip(0);
 					}
 				}
 				buyUpgrade(){
@@ -471,6 +522,54 @@
 						textWrite(this.id+"TextUpgradeCost",numPrefix(this.upgradecost)+"$");
 						textWrite("cashText",Math.floor(cash));
 						recalculateDPS();
+						this.updateTooltip(1);
+						this.updateTooltip(0);
+					}
+				}
+				updateTooltip(type){
+
+					var endString="";
+					var costString=numPrefix(this.cost);
+					var costString2=numPrefix(this.upgradecost);
+					var pluralString = "";
+					
+					if (type==0){
+						if (this.count > 0){
+							if (this.count > 1){
+								var pluralString = "s";
+							}
+							if (this.type == "click"){
+								endString = "You have "+this.count+" Pickaxe"+pluralString+", dealing "+numPrefix(this.power*this.count)+" damage per click."
+							}
+							if (this.type == "damage"){
+								endString = "You have "+this.count+" "+this.name+pluralString+", dealing "+numPrefix(this.power*this.count)+" damage per second."
+							}
+							if (this.type == "cash"){
+								endString = "You have "+this.count+" "+this.name+pluralString+", generating "+numPrefix(this.power*this.count)+"$ per second."
+							}
+						}
+						textWrite(this.id+"Tooltip","Buy "+this.name+": "+costString+"$.<br>"+endString);
+					}
+					if (type==1){
+						if (this.upgradecount > 0){
+							if (this.upgradecount > 1){
+								var pluralString = "s";
+							}
+							if (this.type == "click"){
+								endString = "You have "+this.upgradecount+" Pickaxe upgrade"+pluralString+", giving a "+numPrefix(2**this.upgradecount)+
+								"x damage multiplier.<br>Each Pickaxe level increases damage by "+numPrefix(this.power)+"."
+							}
+							if (this.type == "damage"){
+								endString = "You have "+this.upgradecount+" "+this.name+" upgrade"+pluralString+", giving a "+numPrefix(2**this.upgradecount)+
+								"x damage multiplier.<br>Each "+this.name+" deals "+numPrefix(this.power)+" damage per second."
+							}
+							if (this.type == "cash"){
+								endString = "You have "+this.upgradecount+" "+this.name+" upgrade"+pluralString+", giving a "+numPrefix(2**this.upgradecount)+
+								"x cash multiplier.<br>Each "+this.name+" generates "+numPrefix(this.power)+"$ per second."
+							}
+						}
+						
+						textWrite(this.id+"Tooltip2","Buy "+this.name+" upgrade: "+costString2+"$.<br>"+endString);
 					}
 				}
 				getInfo(){
@@ -479,14 +578,14 @@
 			}
 
 			class MenuButton{
-				constructor(name){
-					this.name=name
+				constructor(id){
+					this.id=id
 					this.visibile=true;
-					document.getElementById(this.name).draggable=false;
+					document.getElementById(this.id).draggable=false;
 				}
 				setVisible(visibility){
 					this.visible=visibility;
-					setImageVisible(this.name,this.visible);
+					setImageVisible(this.id,this.visible);
 				}
 			}
 
@@ -514,6 +613,7 @@
 					this.y=ypos
 				}
 			}
+
 			function recalculateDPS(){
 				DPS=0;
 				CPS=0;
@@ -592,28 +692,52 @@
 		<div id="upgradeHolder">
 			<span class = "standardTextHeader" style="position:relative; top: -2vw;">Items</span>
 			<br>
-			<img src="Data/Sprites/pickaxe.png" onclick = itemPick.buy() id="pickaxeButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "pickaxeTooltip">test</span>
+				<img src="Data/Sprites/pickaxe.png" onclick = itemPick.buy() onh id="pickaxeButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "pickaxeTextCost" class = "standardText"></span>
 			<br>
-			<img src="Data/Sprites/miner.png"  onclick = itemDPS[0].buy() id="minerButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "minerTooltip">test</span>
+				<img src="Data/Sprites/miner.png"  onclick = itemDPS[0].buy() id="minerButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "minerTextCost" class = "standardText"></span>
 			<br>
-			<img src="Data/Sprites/grower.png" onclick = itemCPS[0].buy() id="growerButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "growerTooltip">test</span>
+				<img src="Data/Sprites/grower.png" onclick = itemCPS[0].buy() id="growerButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "growerTextCost" class = "standardText"></span>
 			<br>
-			<img src="Data/Sprites/driller.png" onclick = itemDPS[1].buy() id="drillerButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "drillerTooltip">test</span>
+				<img src="Data/Sprites/driller.png" onclick = itemDPS[1].buy() id="drillerButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "drillerTextCost" class = "standardText"></span>
 			<br>
-			<img src="Data/Sprites/giftshop.png" onclick = itemCPS[1].buy() id="giftshopButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "giftshopTooltip">test</span>
+				<img src="Data/Sprites/giftshop.png" onclick = itemCPS[1].buy() id="giftshopButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "giftshopTextCost" class = "standardText"></span>
 			<br>
-			<img src="Data/Sprites/robot.png" onclick = itemDPS[2].buy() id="robotButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "robotTooltip">test</span>
+				<img src="Data/Sprites/robot.png" onclick = itemDPS[2].buy() id="robotButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "robotTextCost" class = "standardText"></span>
 			<br>
-			<img src="Data/Sprites/timemachine.png" onclick = itemCPS[2].buy() id="timemachineButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "timemachineTooltip">test</span>
+				<img src="Data/Sprites/timemachine.png" onclick = itemCPS[2].buy() id="timemachineButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "timemachineTextCost" class = "standardText"></span>
 			<br>
-			<img src="Data/Sprites/laser.png" onclick = itemDPS[3].buy() id="laserButtonUpgrade" class="standardButton" draggable = "false">
+			<div class = "tooltip">
+				<span class = "tooltipText standardTextSmall imageBorder" id = "laserTooltip">test</span>
+				<img src="Data/Sprites/laser.png" onclick = itemDPS[3].buy() id="laserButtonUpgrade" class="standardButton" draggable = "false">
+			</div>
 			<span id = "laserTextCost" class = "standardText"></span>
 			<br>
 		</div>
@@ -621,28 +745,52 @@
 			<span class = "standardTextHeader" style="position:relative; top: -2vw;">Upgrades</span>
 			<br>
 			<span id = "pickaxeTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/pickaxe.png" onclick = itemPick.buyUpgrade() id="pickaxeButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "pickaxeTooltip2">test</span>
+				<img src="Data/Sprites/pickaxe.png" onclick = itemPick.buyUpgrade() id="pickaxeButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 			<span id = "minerTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/miner.png" onclick = itemDPS[0].buyUpgrade() id="minerButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "minerTooltip2">test</span>
+				<img src="Data/Sprites/miner.png" onclick = itemDPS[0].buyUpgrade() id="minerButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 			<span id = "growerTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/grower.png" onclick = itemCPS[0].buyUpgrade() id="growerButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "growerTooltip2">test</span>
+				<img src="Data/Sprites/grower.png" onclick = itemCPS[0].buyUpgrade() id="growerButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 			<span id = "drillerTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/driller.png" onclick = itemDPS[1].buyUpgrade() id="drillerButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "drillerTooltip2">test</span>
+				<img src="Data/Sprites/driller.png" onclick = itemDPS[1].buyUpgrade() id="drillerButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 			<span id = "giftshopTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/giftshop.png" onclick = itemCPS[1].buyUpgrade() id="giftshopButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "giftshopTooltip2">test</span>
+				<img src="Data/Sprites/giftshop.png" onclick = itemCPS[1].buyUpgrade() id="giftshopButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 			<span id = "robotTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/robot.png" onclick = itemDPS[2].buyUpgrade() id="robotButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "robotTooltip2">test</span>
+				<img src="Data/Sprites/robot.png" onclick = itemDPS[2].buyUpgrade() id="robotButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 			<span id = "timemachineTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/timemachine.png" onclick = itemCPS[2].buyUpgrade() id="timemachineButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "timemachineTooltip2">test</span>
+				<img src="Data/Sprites/timemachine.png" onclick = itemCPS[2].buyUpgrade() id="timemachineButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 			<span id = "laserTextUpgradeCost" class = "standardText"></span>
-			<img src="Data/Sprites/laser.png" onclick = itemDPS[3].buyUpgrade() id="laserButtonUpgrade2" class="standardButton" draggable = "false">
+			<div class = "tooltip2">
+				<span class = "tooltipText2 standardTextSmall imageBorder" id = "laserTooltip2">test</span>
+				<img src="Data/Sprites/laser.png" onclick = itemDPS[3].buyUpgrade() id="laserButtonUpgrade2" class="standardButton" draggable = "false">
+			</div>
 			<br>
 		</div>
 		<div id="upgradeCountHolder">
@@ -674,55 +822,21 @@
 			<p id = "displayGemHealth" class = "blackBorder">Error</p>
 			<p id = "displayGemValue" class = "blackBorder">Error</p>
 		</div>
-		<p id = "displayCash">Error</p>
-		<p id = "displayGemHealthOld">Error</p>
-		<p id = "displayDPS">Error</p>
-		<p></p>
-		<button onclick = itemPick.buyUpgrade() id = "displayPickUpgradeCost">Error</button>
-		<button onclick = itemPick.buy() id = "displayPickCost">Error</button>
-		<span id = "displayPickLevel">Error</span>
-		<p></p>
-		<button onclick = itemDPS[0].buyUpgrade() id = "displayDPSUpgradeCost0">Error</button>
-		<button onclick = itemDPS[0].buy() id = "displayDPSCost0">Error</button>
-		<span id = "displayDPSLevel0">Error</span>
-		<p></p>
-		<button onclick = itemCPS[0].buyUpgrade() id = "displayCPSUpgradeCost0">Error</button>
-		<button onclick = itemCPS[0].buy() id = "displayCPSCost0">Error</button>
-		<span id = "displayCPSLevel0">Error</span>
-		<p></p>
-		<button onclick = itemDPS[1].buyUpgrade() id = "displayDPSUpgradeCost1">Error</button>
-		<button onclick = itemDPS[1].buy() id = "displayDPSCost1">Error</button>
-		<span id = "displayDPSLevel1">Error</span>
-		<p></p>
-		<button onclick = itemCPS[1].buyUpgrade() id = "displayCPSUpgradeCost1">Error</button>
-		<button onclick = itemCPS[1].buy() id = "displayCPSCost1">Error</button>
-		<span id = "displayCPSLevel1">Error</span>
-		<p></p>
-		<button onclick = itemDPS[2].buyUpgrade() id = "displayDPSUpgradeCost2">Error</button>
-		<button onclick = itemDPS[2].buy() id = "displayDPSCost2">Error</button>
-		<span id = "displayDPSLevel2">Error</span>
-		<p></p>
-		<button onclick = itemCPS[2].buyUpgrade() id = "displayCPSUpgradeCost2">Error</button>
-		<button onclick = itemCPS[2].buy() id = "displayCPSCost2">Error</button>
-		<span id = "displayCPSLevel2">Error</span>
-		<p></p>
-		<button onclick = itemDPS[3].buyUpgrade() id = "displayDPSUpgradeCost3">Error</button>
-		<button onclick = itemDPS[3].buy() id = "displayDPSCost3">Error</button>
-		<span id = "displayDPSLevel3">Error</span>
-
+		
 		<script>
 			windowWidth=window.innerWidth;
 			windowHeight=window.innerHeight;
 
 			itemPick=new Item("Pick",0,1,"click",1,"pickaxe");
 			itemDPS=[new Item("Miner",5,1,"damage",0,"miner"),new Item("Driller",32,10,"damage",0,"driller"),new Item("Mining Robot",350,100,"damage",0,"robot"),new Item("Orbital Laser",3200,1000,"damage",0,"laser")]
-			itemCPS=[new Item("Crystal Growing Kit",10,0.5,"damage",0,"grower"),new Item("Gift Shop",100,5,"damage",0,"giftshop"),new Item("Time Machine",1000,50,"damage",0,"timemachine")]
+			itemCPS=[new Item("Crystal Growing Kit",10,0.5,"cash",0,"grower"),new Item("Gift Shop",100,5,"cash",0,"giftshop"),new Item("Time Machine",1000,50,"cash",0,"timemachine")]
 
 			gem1=new Gem("gem1");
 			buttonLeft=new MenuButton("buttonLeft");
 			buttonRight=new MenuButton("buttonRight");
 			buttonItem=[];
 			healthBar = new HealthBar();
+
 			gem1.reloadGem();
 
 			
@@ -772,21 +886,6 @@
 
 				gem1.damage();
 
-				textWrite("displayDPS","DPS: "+DPS+" ("+trueDPS+"). "+CPS+"$ ("+trueCPS+"$) per second.")
-				textWrite("displayPickLevel","Pickaxe Level: "+itemPick.getInfo()[3]+". Pickaxe Power: "+itemPick.getInfo()[4]);
-				textWrite("displayPickCost","Improve Pickaxe: "+itemPick.getInfo()[1]+"$");
-				textWrite("displayPickUpgradeCost","Upgrade: "+itemPick.getInfo()[5]+"$");
-
-				for (i in itemDPS){
-					textWrite("displayDPSLevel"+i,"You have "+itemDPS[i].getInfo()[3]+" "+itemDPS[i].getInfo()[0].toLowerCase()+"s, dealing "+itemDPS[i].getInfo()[4]+" damage per second.")
-					textWrite("displayDPSCost"+i,"Buy "+itemDPS[i].getInfo()[0]+": "+itemDPS[i].getInfo()[1]+"$");
-					textWrite("displayDPSUpgradeCost"+i,"Upgrade: "+itemDPS[i].getInfo()[5]+"$");
-				}
-				for (i in itemCPS){
-					textWrite("displayCPSLevel"+i,"You have "+itemCPS[i].getInfo()[3]+" "+itemCPS[i].getInfo()[0].toLowerCase()+"s, generating "+itemCPS[i].getInfo()[4]+"$ per second.")
-					textWrite("displayCPSCost"+i,"Buy "+itemCPS[i].getInfo()[0]+": "+itemCPS[i].getInfo()[1]+"$");
-					textWrite("displayCPSUpgradeCost"+i,"Upgrade: "+itemCPS[i].getInfo()[5]+"$");
-				}
 			}
 
 		</script>
