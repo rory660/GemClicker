@@ -278,6 +278,7 @@
 					this.maxhealth=0;
 					this.value=0;
 					this.hardness=0;
+					this.clicktimer=0;
 
 					this.recalculateStats();
 
@@ -286,14 +287,18 @@
 				}
 				clicked(){
 					if(this.canbehit){
-						if (itemPick.getInfo()[4]>this.hardness){
-							this.health-=itemPick.getInfo()[4]-this.hardness;
+						if (time-this.clicktimer>50){
+							this.clicktimer=time;
+							if (itemPick.getInfo()[4]>this.hardness){
+								this.health-=itemPick.getInfo()[4]-this.hardness;
+							}
+							if (this.health<=0) {
+								this.gemBreak();
+							}
+							gemshakeinfo=this.shake();
+							healthBar.repos();
 						}
-						if (this.health<=0) {
-							this.gemBreak();
-						}
-						gemshakeinfo=this.shake();
-						healthBar.repos();
+						
 					}
 					else{
 						if(new Date().getTime()-this.breaktimer>1000){
@@ -309,6 +314,7 @@
 						this.numberunlocked++;
 					}
 					this.health=0;
+					setImageVisible("healthbar2",false);
 					this.toggleCanBeHit();
 					gemshakeinfo=this.shake();
 					textWrite("cashText",Math.floor(cash));
@@ -827,17 +833,16 @@
 			windowWidth=window.innerWidth;
 			windowHeight=window.innerHeight;
 
-			itemPick=new Item("Pick",0,1,"click",1,"pickaxe");
+			itemPick=new Item("Pickaxe",0,1,"click",1,"pickaxe");
 			itemDPS=[new Item("Miner",5,1,"damage",0,"miner"),new Item("Driller",32,10,"damage",0,"driller"),new Item("Mining Robot",350,100,"damage",0,"robot"),new Item("Orbital Laser",3200,1000,"damage",0,"laser")]
 			itemCPS=[new Item("Crystal Growing Kit",10,0.5,"cash",0,"grower"),new Item("Gift Shop",100,5,"cash",0,"giftshop"),new Item("Time Machine",1000,50,"cash",0,"timemachine")]
 
-			gem1=new Gem("gem1");
-			buttonLeft=new MenuButton("buttonLeft");
-			buttonRight=new MenuButton("buttonRight");
-			buttonItem=[];
+			gem1 = new Gem("gem1");
+			buttonLeft = new MenuButton("buttonLeft");
+			buttonRight = new MenuButton("buttonRight");
+			buttonItem = [];
 			healthBar = new HealthBar();
 
-			gem1.reloadGem();
 
 			
 			document.getElementById("gem1").onclick=function(){
