@@ -1,9 +1,15 @@
 <html>
 	<head>
+		<link rel="icon" href="Data/Sprites/Gems/gem1.png">
+		<title>Gem Clicker</title>
 		<style>
 			@font-face{
 				font-family: "Expressway-rg";
 				src: url("Data/Font/expresswayrg.ttf") format("truetype");
+			}
+			@font-face{
+				font-family: "CarbonBl";
+				src: url("Data/Font/carbonbl.ttf") format("truetype");
 			}
 			.standardButton{
 			    width: 3vw;
@@ -111,8 +117,14 @@
 			}
 			#textCentered{
 				position: absolute;
-				width:50vw;
+				width:60vw;
 				top: 4.75vw;
+				left: 20vw;
+			}
+			#textCentered2{
+				position: absolute;
+				width:50vw;
+				top: 37.5vw;
 				left: 25vw;
 			}
 			#upgradeHolder{
@@ -219,9 +231,20 @@
 				z-index: 3;
 
 			}
+			#displayGemName{
+				font-family: "CarbonBl";
+				position: relative;
+				margin-top: 0vw;
+				margin-bottom: 0vw;
+				text-align: center;
+				font-size: 5vw;
+				z-index: 3;
+				text-shadow: #000 0px 0px 1vw, #000 0px 0px 1vw, #000 0px 0px 1vw, #000 0px 0px 1vw,  -0.1vw 0 black, 0 0.1vw black, 0.1vw 0 black, 0 -0.1vw black;
+
+			}
 			#displayGemValue{
 				position: relative;
-				margin-top: 5vw;
+				margin-top: -0.5vw;
 				text-align: center;
 				font-size: 3.2vw;
 				z-index: 3;
@@ -233,6 +256,10 @@
 			    width: 5vw;
 			    height: 5vw;
 			    image-rendering: crisp-edges;
+			}
+			#displayDPS{
+				text-align: center;
+				font-size: 2vw;
 			}
 
 
@@ -264,6 +291,7 @@
 
 			class Gem{
 				constructor(id){
+					this.nameList = ["Flawless Moonstone","Ruby","Amethyst","Sapphire","Emerald","Topaz","Quartz","Peridot","Turquoise","Onyx","Moonstone","Garnet","Beryl","Spinel","Diamond","Citrine","Tsavorite","Indicolite","Erinite","Rubellite","Rare Moonstone","Cuprite","Black Quartz","Zircon","Chrysolite","Calcite","Tanzanite","Tourmaline","Clinohumite","Fluorite","Exotic Moonstone","Rhodonite","Selenite","Obsidian","Moldavite","Kyanite","Heliodor","Hiddenite","Rhodochrosite","Magnetite","Prismal Moonstone","Carnelian","Jade","Tiger's Eye","Hemimorphite","Fibrolite","Kosmochlor","Charoite","Labradorite","Epidote","Smooth Moonstone","Almandite","Sulphur","Diopside","Schorl","Vesuvianite","Lapis Lazuli","Hessonite","Achroite","Kunzite","Moonstone Ore","Pyrope","Oligoclase","Imperial Garnet","Spessartine","Benitoite","Black Spinel","Idocrase","Orthoclase","Lolite","Faceted Moonstone","Coral","Cat's Eye","Chrysoprase","Nuummite","Gaspeite","Smithsonite","Rose Quartz","Serpentine","Prehnite","Reflective Moonstone","Almandine","Scapolite","Apatite","Diaspore","Padparadscha","Andalusite","Demantoid","Paraiba","Sphalerite","Superior Moonstone","Sunstone","Cymophane","Chrysocolla","Pearl","Verdite","Haematite","Pectolite","Umbalite","Hackmanite"];
 					this.id=id;
 					this.number=1;
 					this.numberunlocked=1;
@@ -283,7 +311,7 @@
 					this.recalculateStats();
 
 					textWrite("cashText",Math.floor(cash));
-					textWrite("displayGemHealth",Math.floor(this.health)+"/"+this.maxhealth);
+					textWrite("displayGemHealth",numPrefix(Math.floor(this.health))+"/"+numPrefix(this.maxhealth));
 				}
 				clicked(){
 					if(this.canbehit){
@@ -305,7 +333,7 @@
 							
 						}
 					}
-					textWrite("displayGemHealth",Math.floor(this.health)+"/"+this.maxhealth);
+					textWrite("displayGemHealth",numPrefix(Math.floor(this.health))+"/"+numPrefix(this.maxhealth));
 				}
 				gemBreak(){
 					this.crackvisible=true;
@@ -416,12 +444,43 @@
 					}
 					healthBar.repos();
 					this.repos();
-					textWrite("displayGemValue","Hardness: "+this.hardness+" Value: "+this.value+"$");
-					textWrite("displayGemHealth",Math.floor(this.health)+"/"+this.maxhealth);
+					textWrite("displayGemValue","Hardness: "+numPrefix(this.hardness)+" Value: "+numPrefix(this.value)+"$");
+					textWrite("displayGemHealth",numPrefix(Math.floor(this.health))+"/"+numPrefix(this.maxhealth));
+					
+					var i=0;
+					var tierString = "";
+					if (Math.floor(this.number/100)==1){
+						tierString=" II"
+					}
+					if (Math.floor(this.number/200)==1){
+						tierString=" III"
+					}
+					if (Math.floor(this.number/300)==1){
+						tierString=" IV"
+					}
+					if (Math.floor(this.number/400)==1){
+						tierString=" V"
+					}
+					if (Math.floor(this.number/500)==1){
+						tierString=" VI"
+					}
+					if (Math.floor(this.number/600)==1){
+						tierString=" VII"
+					}
+					if (Math.floor(this.number/700)==1){
+						tierString=" VIII"
+					}
+					if (Math.floor(this.number/800)==1){
+						tierString=" IX"
+					}
+					if (Math.floor(this.number/900)==1){
+						tierString=" X"
+					}
+					textWrite("displayGemName",this.nameList[this.number-Math.floor(this.number/100)*100]+tierString);
 				}
 
 				recalculateStats(){
-					var mult=5
+					var mult=5;
 					if (this.number==1){
 						mult=1;
 					}
@@ -451,7 +510,7 @@
 							this.toggleCanBeHit();
 						}
 					}
-					textWrite("displayGemHealth",Math.floor(this.health)+"/"+this.maxhealth);
+					textWrite("displayGemHealth",numPrefix(Math.floor(this.health))+"/"+numPrefix(this.maxhealth));
 				}
 				toggleCanBeHit(){
 					if (this.canbehit){
@@ -641,6 +700,15 @@
 				else{
 					trueCPS=0;
 				}
+				DPSString = "";
+				CPSString = "";
+				if (DPS>0){
+					DPSString = DPS + " (" + trueDPS + ") damage per second.<br>"
+				}
+				if (CPS>0){
+					CPSString = CPS + "$ per second."
+				}
+				textWrite("displayDPS",DPSString + CPSString);
 			}
 
 			function textWrite(id,text){
@@ -826,7 +894,11 @@
 		<img src = "Data/Sprites/darkfade.png" id = "cashFadeIcon" class = "standardFadeIcon" draggable = "false">
 		<div id="textCentered">
 			<p id = "displayGemHealth" class = "blackBorder">Error</p>
+			<p id = "displayGemName" class = "blackBorder">Error</p>
 			<p id = "displayGemValue" class = "blackBorder">Error</p>
+		</div>
+		<div id="textCentered2">
+			<p id = "displayDPS" class = "blackBorder">Error</p>
 		</div>
 		
 		<script>
