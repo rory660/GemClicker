@@ -9,9 +9,9 @@ The game doesn't save yet.
 
 Lots of features are yet to be added (achievements, stats, etc).
 
-# [Gem Clicker can be played here.](https://rory660.github.io/GemClicker/clicker.html)
+## [Gem Clicker can be played here.](https://rory660.github.io/GemClicker/clicker.html)
 
-# Todo List
+### Todo List
 Saving
 
 Achievements
