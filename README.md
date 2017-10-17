@@ -4,4 +4,4 @@ Gem Clicker is an incremental/idle game in the same vein as Cookie Clicker. The 
 # Why?
 I am making Gem Clicker as a learning exercise for HTMl, CSS and Javascript.
 
-# [Gem Clicker can be played here.](google.com)
+# [Gem Clicker can be played here.](https://rory660.github.io/GemClicker/clicker.html)
