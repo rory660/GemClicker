@@ -487,7 +487,12 @@
 					else{
 						mult=this.number*5
 					}
-					this.maxhealth=Math.ceil(2*mult*(mult+10));
+					if (this.number%10 == 0){
+						this.maxhealth=Math.ceil(20*mult*(mult+10));
+					}
+					else{
+						this.maxhealth=Math.ceil(2*mult*(mult+10));
+					}
 					this.health=this.maxhealth;
 					this.hardness=Math.ceil(Math.pow(mult,2)/20);
 					this.value = this.hardness * 10;
@@ -538,11 +543,11 @@
 			}
 
 			class Item{
-				constructor(name, costmodifier, power, type, count, id){
+				constructor(name, basecost, power, type, count, id){
 					this.name=name;
 					this.count=count;
-					this.costmodifier=costmodifier;
-					this.cost=Math.pow(this.count+costmodifier,2);
+					this.baseCost=basecost;
+					this.cost=this.baseCost;
 					this.power=power;
 					this.type=type;
 					this.upgradecost=Math.pow(10,this.cost.toString().length);
@@ -565,7 +570,7 @@
 					if (this.cost<=cash) {
 						cash-=this.cost;
 						this.count+=1;
-						this.cost=Math.pow(this.count+this.costmodifier,2);
+						this.cost=Math.ceil(this.baseCost*Math.pow(1.2,this.count));
 						if (this.count > 0){
 							textWrite(this.id+"TextCount",numPrefix(this.count));
 						}
@@ -905,9 +910,9 @@
 			windowWidth=window.innerWidth;
 			windowHeight=window.innerHeight;
 
-			itemPick=new Item("Pickaxe",0,1,"click",1,"pickaxe");
-			itemDPS=[new Item("Miner",5,1,"damage",0,"miner"),new Item("Driller",32,10,"damage",0,"driller"),new Item("Mining Robot",350,100,"damage",0,"robot"),new Item("Orbital Laser",3200,1000,"damage",0,"laser")]
-			itemCPS=[new Item("Crystal Growing Kit",10,0.5,"cash",0,"grower"),new Item("Gift Shop",100,5,"cash",0,"giftshop"),new Item("Time Machine",1000,50,"cash",0,"timemachine")]
+			itemPick=new Item("Pickaxe",10,1,"click",1,"pickaxe");
+			itemDPS=[new Item("Miner",100,1,"damage",0,"miner"),new Item("Driller",10000,10,"damage",0,"driller"),new Item("Mining Robot",1000000,100,"damage",0,"robot"),new Item("Orbital Laser",100000000,1000,"damage",0,"laser")]
+			itemCPS=[new Item("Crystal Growing Kit",1000,0.5,"cash",0,"grower"),new Item("Gift Shop",100000,5,"cash",0,"giftshop"),new Item("Time Machine",10000000,50,"cash",0,"timemachine")]
 
 			gem1 = new Gem("gem1");
 			buttonLeft = new MenuButton("buttonLeft");
