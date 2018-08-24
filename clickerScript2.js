@@ -5,7 +5,7 @@ windowHeight=window.innerHeight;
 
 itemPick=new Item("Pickaxe",10,1,"click",1,"pickaxe");
 itemDPS=[new Item("Miner",100,5,"damage",0,"miner"),new Item("Driller",10000,50,"damage",0,"driller"),new Item("Mining Robot",1000000,500,"damage",0,"robot"),new Item("Orbital Laser",100000000,5000,"damage",0,"laser")]
-itemCPS=[new Item("Crystal Growing Kit",1000,1,"cash",0,"grower"),new Item("Gift Shop",100000,10,"cash",0,"giftshop"),new Item("Time Machine",10000000,100,"cash",0,"timemachine")]
+itemCPS=[new Item("Crystal Growing Kit",1000,10,"cash",0,"grower"),new Item("Gift Shop",100000,100,"cash",0,"giftshop"),new Item("Time Machine",10000000,1000,"cash",0,"timemachine")]
 var cookies = document.cookie.split(";");
 gem1 = new Gem("gem1");
 buttonLeft = new MenuButton("buttonLeft");
