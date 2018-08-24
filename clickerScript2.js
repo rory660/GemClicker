@@ -13,46 +13,49 @@ buttonRight = new MenuButton("buttonRight");
 buttonItem = [];
 healthBar = new HealthBar();
 // cookies = "cash=0; gem=400,400,50,5,2,2; pick=15,1,2,100,0; dps0=100,1,0,1000,0; dps1=10000,10,0,100000,0; dps2=1000000,100,0,10000000,0; dps3=100000000,1000,0,1000000000,0; cps0=1000,0.5,0,10000,0; cps1=100000,5,0,1000000,0; cps2=10000000,50,0,100000000,0".split(";");
-for(cn = 0; cn < cookies.length; cn++){
-	cname = cookies[cn].split("=")[0].trim();
-	cvalue = cookies[cn].split("=")[1].trim();
-	if (cname == "cash"){
-		cash = Number(cvalue);
-	}
-	else{
-		cvalue = cvalue.split(",");
-		for(i = 0; i < cvalue.length; i++){
-			cvalue[i] = Number(cvalue[i]);
+if(cookies.length > 5){
+	for(cn = 0; cn < cookies.length; cn++){
+		cname = cookies[cn].split("=")[0].trim();
+		cvalue = cookies[cn].split("=")[1].trim();
+		if (cname == "cash"){
+			cash = Number(cvalue);
+		}
+		else{
+			cvalue = cvalue.split(",");
+			for(i = 0; i < cvalue.length; i++){
+				cvalue[i] = Number(cvalue[i]);
+			}
+		}
+		if (cname == "gem"){
+			gem1.setInfo(cvalue);
+		}
+		if (cname == "pick"){
+			itemPick.setInfo(cvalue);
+		}
+		if (cname == "dps0"){
+			itemDPS[0].setInfo(cvalue);
+		}
+		if (cname == "dps1"){
+			itemDPS[1].setInfo(cvalue);
+		}
+		if (cname == "dps2"){
+			itemDPS[2].setInfo(cvalue);
+		}
+		if (cname == "dps3"){
+			itemDPS[3].setInfo(cvalue);
+		}
+		if (cname == "cps0"){
+			itemCPS[0].setInfo(cvalue);
+		}
+		if (cname == "cps1"){
+			itemCPS[1].setInfo(cvalue);
+		}
+		if (cname == "cps2"){
+			itemCPS[2].setInfo(cvalue);
 		}
 	}
-	if (cname == "gem"){
-		gem1.setInfo(cvalue);
-	}
-	if (cname == "pick"){
-		itemPick.setInfo(cvalue);
-	}
-	if (cname == "dps0"){
-		itemDPS[0].setInfo(cvalue);
-	}
-	if (cname == "dps1"){
-		itemDPS[1].setInfo(cvalue);
-	}
-	if (cname == "dps2"){
-		itemDPS[2].setInfo(cvalue);
-	}
-	if (cname == "dps3"){
-		itemDPS[3].setInfo(cvalue);
-	}
-	if (cname == "cps0"){
-		itemCPS[0].setInfo(cvalue);
-	}
-	if (cname == "cps1"){
-		itemCPS[1].setInfo(cvalue);
-	}
-	if (cname == "cps2"){
-		itemCPS[2].setInfo(cvalue);
-	}
 }
+
 
 function save(){
 	saveString = "cash="+cash.toString();
