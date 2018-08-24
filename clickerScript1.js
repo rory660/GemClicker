@@ -499,16 +499,16 @@ function numPrefix(n){
 		return n.toString();
 	}
 	if (numLength<7){
-		return Math.floor(n/100)/10+"k";
+		return Math.floor(n/10)/100+"k";
 	}
 	if (numLength<10){
-		return Math.floor(n/100000)/10+"M";
+		return Math.floor(n/10000)/100+"M";
 	}
 	if (numLength<13){
-		return Math.floor(n/100000000)/10+"B";
+		return Math.floor(n/10000000)/100+"B";
 	}
 	if (numLength<16){
-		return Math.floor(n/100000000000)/10+"T";
+		return Math.floor(n/10000000000)/100+"T";
 	}
-	return Math.floor(n/100000000000000)/10+"P";
+	return Math.floor(n/10000000000000)/100+"P";
 }
