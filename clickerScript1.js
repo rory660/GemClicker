@@ -223,6 +223,18 @@ class Gem{
 	getInfo(){
 		return [this.maxhealth,this.health,this.value,this.hardness,this.number];
 	}
+	getInfoSave(){
+		return [this.maxhealth,this.health,this.value,this.hardness,this.number, this.numberunlocked];
+	}
+	setInfo(info){
+		this.maxhealth = info[0];
+		this.health = info[1];
+		this.value = info[2];
+		this.hardness = info[3];
+		this.number = info[4] - 1;
+		this.numberunlocked = info[5];
+		this.changeGem(1);
+	}
 	damage(){
 		if(this.canbehit){
 			if (DPS-this.hardness>0){
@@ -366,13 +378,35 @@ class Item{
 		}
 	}
 	getInfo(){
-		return [this.name,this.cost,this.power,this.count,this.power*this.count,this.upgradecost,this.upgradecount]
+		return [this.name,this.cost,this.power,this.count,this.power*this.count,this.upgradecost,this.upgradecount];
+	}
+	getInfoSave(){
+		return [this.cost,this.power,this.count,this.upgradecost,this.upgradecount];
+	}
+	setInfo(info){
+		this.cost = info[0];
+		this.power = info[1];
+		this.count = info[2];
+		this.upgradecost = info[3];
+		this.upgradecount = info[4];	
+		if (this.upgradecount > 0){
+			textWrite(this.id+"TextUpgradeCount",numPrefix(this.upgradecount));
+		}
+		textWrite(this.id+"TextUpgradeCost",numPrefix(this.upgradecost)+"$");
+		textWrite("cashText",Math.floor(cash));
+		if (this.count > 0){
+			textWrite(this.id+"TextCount",numPrefix(this.count));
+		}
+		textWrite(this.id+"TextCost",numPrefix(this.cost)+"$");
+		textWrite("cashText",Math.floor(cash));
+		this.updateTooltip(1);
+		this.updateTooltip(0);
 	}
 }
 
 class MenuButton{
 	constructor(id){
-		this.id=id
+		this.id=id;
 		this.visibile=true;
 		document.getElementById(this.id).draggable=false;
 	}
