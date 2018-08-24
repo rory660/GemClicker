@@ -218,7 +218,7 @@ class Gem{
 		}
 		this.health=this.maxhealth;
 		this.hardness=Math.ceil(Math.pow(mult,2)/20);
-		this.value = this.hardness * 10;
+		this.value = this.hardness * Math.floor(10 * (1 + this.number * 0.05));
 	}
 	getInfo(){
 		return [this.maxhealth,this.health,this.value,this.hardness,this.number];
