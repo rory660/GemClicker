@@ -51,8 +51,9 @@ function save(){
 	for(i = 0; i < 3; i++){
 		saveString+= ";cps"+i.toString()+"="+itemCPS[i].getInfoSave().join();
 	}
-	for each(saveItem in saveString.split(";")){
-		document.cookie = saveItem+"; expires=Thu, 18 Dec 2200 12:00:00 UTC; path=/";
+	saveStuff = saveString.split(";");
+	for(i = 0; i < saveStuff.length; i++){
+		document.cookie = saveStuff[i]+"; expires=Thu, 18 Dec 2200 12:00:00 UTC; path=/";
 	}
 	
 }
