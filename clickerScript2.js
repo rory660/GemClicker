@@ -16,7 +16,7 @@ healthBar = new HealthBar();
 for(cn = 0; cn < cookies.length; cn++){
 	cname = cookies[cn].split("=")[0].trim();
 	cvalue = cookies[cn].split("=")[1].trim();
-	if cname = "cash"{
+	if (cname = "cash"){
 		cash = Number(cvalue);
 	}
 	else{
@@ -25,31 +25,31 @@ for(cn = 0; cn < cookies.length; cn++){
 			cvalue[i] = Number(cvalue[i]);
 		}
 	}
-	if cname = "gem"{
+	if (cname = "gem"){
 		gem1.setInfo(cvalue);
 	}
-	if cname = "pick"{
+	if (cname = "pick"){
 		itemPick.setInfo(cvalue);
 	}
-	if cname = "dps0"{
+	if (cname = "dps0"){
 		itemDPS[0].setInfo(cvalue);
 	}
-	if cname = "dps1"{
+	if (cname = "dps1"){
 		itemDPS[1].setInfo(cvalue);
 	}
-	if cname = "dps2"{
+	if (cname = "dps2"){
 		itemDPS[2].setInfo(cvalue);
 	}
-	if cname = "dps3"{
+	if (cname = "dps3"){
 		itemDPS[3].setInfo(cvalue);
 	}
-	if cname = "cps0"{
+	if (cname = "cps0"){
 		itemCPS[0].setInfo(cvalue);
 	}
-	if cname = "cps1"{
+	if (cname = "cps1"){
 		itemCPS[1].setInfo(cvalue);
 	}
-	if cname = "cps2"{
+	if (cname = "cps2"){
 		itemCPS[2].setInfo(cvalue);
 	}
 }
