@@ -43,15 +43,18 @@ if(cookies.length > 4){
 
 function save(){
 	saveString = "cash="+cash.toString();
-	saveString += "; gem="+gem1.getInfoSave().join();
-	saveString+= "; pick="+itemPick.getInfoSave().join();
+	saveString += ";gem="+gem1.getInfoSave().join();
+	saveString+= ";pick="+itemPick.getInfoSave().join();
 	for(i = 0; i < 4; i++){
-		saveString+= "; dps"+i.toString()+"="+itemDPS[i].getInfoSave().join();
+		saveString+= ";dps"+i.toString()+"="+itemDPS[i].getInfoSave().join();
 	}
 	for(i = 0; i < 3; i++){
-		saveString+= "; cps"+i.toString()+"="+itemCPS[i].getInfoSave().join();
+		saveString+= ";cps"+i.toString()+"="+itemCPS[i].getInfoSave().join();
 	}
-	document.cookie = saveString+"; expires=Thu, 18 Dec 2200 12:00:00 UTC; path=/";
+	for each(saveItem in saveString.split(";")){
+		document.cookie = saveItem+"; expires=Thu, 18 Dec 2200 12:00:00 UTC; path=/";
+	}
+	
 }
 
 document.getElementById("gem1").onclick=function(){
