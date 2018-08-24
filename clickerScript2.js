@@ -97,7 +97,7 @@ recalculateDPS();
 
 
 setInterval(function() { mainloop() },1000/60);
-setInterval(function() { save() },1000);
+setInterval(function() { save() },30000);
 
 function mainloop(){
 
