@@ -172,31 +172,31 @@ class Gem{
 		
 		var i=0;
 		var tierString = "";
-		if (Math.floor(this.number/100)==1){
+		if (Math.floor((this.number - 1)/100)==1){
 			tierString=" II"
 		}
-		if (Math.floor(this.number/200)==1){
+		if (Math.floor((this.number - 1)/200)==1){
 			tierString=" III"
 		}
-		if (Math.floor(this.number/300)==1){
+		if (Math.floor((this.number - 1)/300)==1){
 			tierString=" IV"
 		}
-		if (Math.floor(this.number/400)==1){
+		if (Math.floor((this.number - 1)/400)==1){
 			tierString=" V"
 		}
-		if (Math.floor(this.number/500)==1){
+		if (Math.floor((this.number - 1)/500)==1){
 			tierString=" VI"
 		}
-		if (Math.floor(this.number/600)==1){
+		if (Math.floor((this.number - 1)/600)==1){
 			tierString=" VII"
 		}
-		if (Math.floor(this.number/700)==1){
+		if (Math.floor((this.number - 1)/700)==1){
 			tierString=" VIII"
 		}
-		if (Math.floor(this.number/800)==1){
+		if (Math.floor((this.number - 1)/800)==1){
 			tierString=" IX"
 		}
-		if (Math.floor(this.number/900)==1){
+		if (Math.floor((this.number - 1)/900)==1){
 			tierString=" X"
 		}
 		textWrite("displayGemName",this.nameList[this.number-Math.floor(this.number/100)*100]+tierString);
