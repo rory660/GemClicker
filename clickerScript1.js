@@ -344,13 +344,13 @@ class Item{
 					var pluralString = "s";
 				}
 				if (this.type == "click"){
-					endString = "Your Pickaxe is level "+this.count+", dealing "+numPrefix(this.power*this.count)+" damage per click."
+					endString = "Your Pickaxe is level "+this.count+", dealing "+numPrefix(this.power*this.count)+" damage per click.<br>Each Pickaxe level increases damage by "+numPrefix(this.power)+".";
 				}
 				if (this.type == "damage"){
-					endString = "You have "+this.count+" "+this.name+pluralString+", dealing "+numPrefix(this.power*this.count)+" damage per second."
+					endString = "You have "+this.count+" "+this.name+pluralString+", dealing "+numPrefix(this.power*this.count)+" damage per second.<br>Each "+this.name+" deals "+numPrefix(this.power)+" damage per second.";
 				}
 				if (this.type == "cash"){
-					endString = "You have "+this.count+" "+this.name+pluralString+", generating "+numPrefix(this.power*this.count)+"$ per second."
+					endString = "You have "+this.count+" "+this.name+pluralString+", generating "+numPrefix(this.power*this.count)+"$ per second.<br>Each "+this.name+" generates "+numPrefix(this.power)+"$ per second.";
 				}
 			}
 			textWrite(this.id+"Tooltip","Buy "+this.name+": "+costString+"$.<br>"+endString);
@@ -362,15 +362,15 @@ class Item{
 				}
 				if (this.type == "click"){
 					endString = "You have "+this.upgradecount+" Pickaxe upgrade"+pluralString+", giving a "+numPrefix(2**this.upgradecount)+
-					"x damage multiplier.<br>Each Pickaxe level increases damage by "+numPrefix(this.power)+"."
+					"x damage multiplier.";
 				}
 				if (this.type == "damage"){
 					endString = "You have "+this.upgradecount+" "+this.name+" upgrade"+pluralString+", giving a "+numPrefix(2**this.upgradecount)+
-					"x damage multiplier.<br>Each "+this.name+" deals "+numPrefix(this.power)+" damage per second."
+					"x damage multiplier.";
 				}
 				if (this.type == "cash"){
 					endString = "You have "+this.upgradecount+" "+this.name+" upgrade"+pluralString+", giving a "+numPrefix(2**this.upgradecount)+
-					"x cash multiplier.<br>Each "+this.name+" generates "+numPrefix(this.power)+"$ per second."
+					"x cash multiplier.";
 				}
 			}
 			
