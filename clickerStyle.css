@@ -270,3 +270,17 @@ body{
         -ms-user-select: none;
             user-select: none;
 }
+
+#header{
+	text-align: right;
+	font-size: 1.5vw;
+	
+}
+
+#header>a{
+	color: rgb(28, 72, 218);
+}
+
+#header>a:hover{
+	color: rgb(28, 158, 218);
+}
